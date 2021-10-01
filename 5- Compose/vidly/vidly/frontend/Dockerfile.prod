@@ -4,12 +4,15 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
+# the following URL is fake, but you get the idea 
+ENV REACT_APP_API_URL=http://104.131.24.150:3001/api
 RUN npm run build
 
 # Step 2: production stage 
 FROM nginx:1.12-alpine
-RUN addgroup app && adduser -S -G app app
-USER app
+# these two lines below are commented out because nginx expects us to run it by root user
+# RUN addgroup app && adduser -S -G app app
+# USER app
 COPY --from=build-stage /app/build /usr/share/nginx/html
 EXPOSE 80 
-ENTRYPOINT [ "nginx", "-g", "daemon-off;" ]
+ENTRYPOINT [ "nginx", "-g", "daemon-off;" ] 
